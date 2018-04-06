@@ -39,7 +39,7 @@ int main()
 		int u = -1, minn = inf;
 		for (int j = 0; j < n; j++)
 		{
-			//如果是没有访问过的节点，而且距离比最小的距离小。
+			//寻找有更新的距离的节点。
 			if (visit[j] == false && dis[j] < minn)
 			{
 				u = j;
@@ -51,16 +51,22 @@ int main()
 		visit[u] = true;
 		for (int v = 0; v < n; v++)
 		{
+			//没访问过而且路是通的。
 			if (visit[v] == false && e[u][v] != inf)
 			{
+				//判断距离是否松弛。
 				if (dis[u] + e[u][v] < dis[v])
 				{
 					dis[v] = dis[u] + e[u][v];
+					//如果是最近的，那么num没有增加
 					num[v] = num[u];
 					w[v] = w[u] + weight[v];
 				}
+				//距离相等的情况，如果只是找最短路径就不需要判断了
+				//但需要找到更多的权重。
 				else if (dis[u] + e[u][v] == dis[v])
 				{
+					//如果找到同样的路到v，那么就把路都加在一起。
 					num[v] = num[v] + num[u];
 					if (w[u] + weight[v] > w[v])
 						w[v] = w[u] + weight[v];
@@ -71,4 +77,4 @@ int main()
 	printf("%d %d", num[c2], w[c2]);
     return 0;
 }
-
+ 
