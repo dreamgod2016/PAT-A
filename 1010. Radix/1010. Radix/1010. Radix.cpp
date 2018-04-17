@@ -5,14 +5,16 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 long long get_num(string number, int radix);
+long long find_radix(string n, long long num);
 int main()
 {
 	string a, b, temp;
 	int tag, radix, i = 2;
-	long long re_a, re_b = 0;
+	long long re_a, re;
 	cin >> a >> b >> tag >> radix;
 	if (tag == 2)
 	{
@@ -21,6 +23,13 @@ int main()
 		b = temp;
 	}
 	re_a = get_num(a, radix);
+	re = find_radix(b, re_a);
+	if (re != -1)
+		cout << re;
+	else
+		cout << "Impossible";
+	/*
+	//暴力搜索-。-
 	while (re_b <= re_a)
 	{
 		re_b = get_num(b, i);
@@ -31,7 +40,7 @@ int main()
 		}
 		i++;
 	}
-	cout << "Impossible";
+	*/
     return 0;
 }
 long long get_num(string number, int radix)
@@ -50,4 +59,24 @@ long long get_num(string number, int radix)
 		order--;
 	}
 	return result;
+}
+long long find_radix(string n, long long num)
+{
+	//找到最大的元素，就限制了进制的最小值，至少是出现的最大数字/字母+1.
+	char it = *max_element(n.begin(), n.end());
+	long long low = (isdigit(it) ? it - '0' : it - 'a') + 1;
+	long long high = max(num, low);
+	while (low <= high)
+	{
+		//使用二分查找。
+		long long mid = (low + high) / 2;
+		long long t = get_num(n, mid);
+		if (t < 0 || t > num)
+			high = mid - 1;
+		else if (t == num)
+			return mid;
+		else
+			low = mid + 1;
+	}
+	return -1;
 }
