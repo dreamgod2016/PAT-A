@@ -22,10 +22,11 @@ void dfs(int v)
 	if (v == 0)
 	{
 		int need = 0, back = 0;
+		//查找的时候是倒着找的，所以这里要倒着把正确的顺序拿回来。
 		for (int i = temppath.size() - 1; i >= 0; i--)
 		{
 			int id = temppath[i];
-			if (weight[i] > 0)
+			if (weight[id] > 0)
 			{
 				//如果有多的，就可能要搬回来。
 				back += weight[id];
@@ -69,7 +70,7 @@ int main()
 {
 	fill(e[0], e[0] + 510 * 510, inf);
 	fill(dis, dis + 510, inf);
-	cin >> cmax >> n >> sp >> m;
+	scanf("%d%d%d%d", &cmax, &n, &sp, &m);
 	for (int i = 1; i <= n; i++)
 	{
 		//第0个是特殊点，输入的是从第一个开始
@@ -80,8 +81,10 @@ int main()
 	for (int i = 0; i < m; i++)
 	{
 		int a, b;
-		cin >> a >> b;
-		cin >> e[a][b];
+		scanf("%d%d", &a, &b);
+		scanf("%d", &e[a][b]);
+		//cin >> a >> b;
+		//cin >> e[a][b];
 		e[b][a] = e[a][b];
 	}
 	dis[0] = 0;//出发点
@@ -95,25 +98,26 @@ int main()
 				u = j;
 				minn = dis[j];
 			}
-			if (u == -1) break;
-			visit[u] = true;//开始遍历整个点
-			for (int v = 0; v <= n; v++)
+		}
+		if (u == -1) break;
+		visit[u] = true;//开始遍历整个点
+		for (int v = 0; v <= n; v++)
+		{
+			if (visit[v] == false && e[u][v] != inf)
 			{
-				if (visit[v] == false && e[u][v] != inf)
+				if (dis[v] > dis[u] + e[u][v])
 				{
-					if (dis[v] > dis[u] + e[u][v])
-					{
-						dis[v] = dis[u] + e[u][v];
-						pre[v].clear();
-						pre[v].push_back(u);
-					}
-					else if (dis[v] == dis[u] + e[u][v])
-					{
-						pre[v].push_back(u);
-					}
+					dis[v] = dis[u] + e[u][v];
+					pre[v].clear();
+					pre[v].push_back(u);
+				}
+				else if (dis[v] == dis[u] + e[u][v])
+				{
+					pre[v].push_back(u);
 				}
 			}
 		}
+		
 	}
 	//从sp开始寻找，直到找到v==0的出发点。
 	dfs(sp);
